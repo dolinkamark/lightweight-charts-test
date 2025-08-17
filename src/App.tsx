@@ -1,4 +1,6 @@
-import { ChartComponent } from './components/ChartComponent'
+import { CandleStickChart } from './components/CandleStickChart';
+import { ChartComponent } from './components/ChartComponent';
+import stockData from './data/NVDA_5min_20250812.json';
 
 const initialData = [
   { time: '2018-12-22', value: 32.51 },
@@ -13,12 +15,33 @@ const initialData = [
   { time: '2018-12-31', value: 22.67 },
 ];
 
+const candlesticks = stockData.values.map(s => {
+  const time = Math.floor(
+    new Date(s.datetime.replace(' ', 'T') + 'Z').getTime() / 1000
+  );
+
+  return {
+    time: time,
+    open: parseFloat(s.open),
+    high: parseFloat(s.high),
+    low: parseFloat(s.low),
+    close: parseFloat(s.close),
+  };
+});
+
+console.log(candlesticks);
+
 function App() {
   return (
-    <div style={{ margin: '20px' }}>
-      <ChartComponent data={initialData} />
-    </div>
-  )
+    <>
+      <div style={{ margin: '20px' }}>
+        <ChartComponent data={initialData} />
+      </div>
+      <div style={{ margin: '20px' }}>
+        <CandleStickChart data={candlesticks} />
+      </div>
+    </>
+  );
 }
 
 export default App;
