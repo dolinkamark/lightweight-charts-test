@@ -5,6 +5,7 @@ import {
 } from 'lightweight-charts';
 import { useEffect, useRef } from 'react';
 import { ActionPoint } from './ActionPoint';
+import { setPriceAxis } from '../helpers/chart.helpers';
 
 export const CandleStickChart = props => {
   const {
@@ -48,12 +49,15 @@ export const CandleStickChart = props => {
       timeScale: {
         timeVisible: true,
         secondsVisible: false,
-      },
+      }
     });
+
     chart.timeScale().fitContent();
 
     const series = chart.addSeries(CandlestickSeries);
     series.setData(data);
+
+    setPriceAxis(chart, series);
 
     //const actionPoint = new ActionPoint(chart, series, { time: '2018-12-23', price: 32.51 });
     //series.attachPrimitive(actionPoint);
