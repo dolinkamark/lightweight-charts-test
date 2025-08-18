@@ -29,8 +29,6 @@ const candlesticks = stockData.values.map(s => {
   };
 });
 
-console.log(candlesticks);
-
 function App() {
   return (
     <>

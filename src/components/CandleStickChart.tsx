@@ -1,5 +1,4 @@
 import {
-  AreaSeries,
   createChart,
   ColorType,
   CandlestickSeries,
