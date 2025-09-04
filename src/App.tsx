@@ -1,4 +1,4 @@
-import { CandlestickChart } from './components/CandlestickChart';
+import { CandlestickChart } from './components/CandlestickChart2';
 import { ChartComponent } from './components/ChartComponent';
 import stockData from './data/NVDA_5min_20250812.json';
 
