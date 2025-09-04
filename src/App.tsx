@@ -1,4 +1,4 @@
-import { CandleStickChart } from './components/CandleStickChart';
+import { CandlestickChart } from './components/CandlestickChart';
 import { ChartComponent } from './components/ChartComponent';
 import stockData from './data/NVDA_5min_20250812.json';
 
@@ -36,7 +36,7 @@ function App() {
         <ChartComponent data={initialData} />
       </div>
       <div style={{ margin: '20px' }}>
-        <CandleStickChart data={candlesticks} />
+        <CandlestickChart data={candlesticks} />
       </div>
     </>
   );

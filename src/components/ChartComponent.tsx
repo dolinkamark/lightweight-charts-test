@@ -51,10 +51,12 @@ export const ChartComponent = props => {
     });
     newSeries.setData(data);
 
-    const actionPoint = new ActionPoint(chart, newSeries, {
+    const point = {
       time: '2018-12-23',
       price: 32.51,
-    });
+    };
+
+    const actionPoint = new ActionPoint(chart, newSeries, point, { type: "Sell" });
     newSeries.attachPrimitive(actionPoint);
 
     window.addEventListener('resize', handleResize);
