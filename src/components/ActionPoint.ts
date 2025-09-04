@@ -14,7 +14,12 @@ import type {
   Time,
 } from 'lightweight-charts';
 
-const fontSize = 18;
+const fontSize = 14;
+const buyColor = "#1CCA11";
+const sellColor = "#E10011";
+
+const buyTextColor = "#000000";
+const sellTextColor = "#FAFAFA";
 
 interface ViewPoint {
   x: Coordinate | null;
@@ -27,37 +32,37 @@ interface Point {
 }
 
 class ActionPointPaneRenderer implements IPrimitivePaneRenderer {
-  _p1: ViewPoint;
+  point: ViewPoint;
   text: string;
   _options: ActionPointOptions;
 
-  constructor(p1: ViewPoint, text1: string, options: ActionPointOptions) {
-    this._p1 = p1;
+  constructor(point: ViewPoint, text1: string, options: ActionPointOptions) {
+    this.point = point;
     this.text = text1;
     this._options = options;
   }
 
   draw(target: CanvasRenderingTarget2D) {
     target.useBitmapCoordinateSpace(scope => {
-      if (this._p1.x === null || this._p1.y === null) return;
+      if (this.point.x === null || this.point.y === null) return;
 
       const ctx = scope.context;
-      const x1Scaled = Math.round(this._p1.x * scope.horizontalPixelRatio);
-      const y1Scaled = Math.round(this._p1.y * scope.verticalPixelRatio);
+      const x1Scaled = Math.round(this.point.x * scope.horizontalPixelRatio);
+      const y1Scaled = Math.round(this.point.y * scope.verticalPixelRatio);
       const textYScaled = Math.round(
-        (this._p1.y + fontSize / 2 - this._options.lineWidth / 2) *
+        (this.point.y + fontSize / 2 - this._options.lineWidth / 2) *
           scope.verticalPixelRatio
       );
 
       const x1 = Math.round(
-        (this._p1.x - this._options.width / 2) * scope.horizontalPixelRatio
+        (this.point.x - this._options.width / 2) * scope.horizontalPixelRatio
       );
       const x2 = Math.round(
-        (this._p1.x + this._options.width / 2) * scope.horizontalPixelRatio
+        (this.point.x + this._options.width / 2) * scope.horizontalPixelRatio
       );
 
       ctx.lineWidth = this._options.lineWidth;
-      ctx.strokeStyle = this._options.lineColor;
+      ctx.strokeStyle = this._options.type == "Buy" ? buyColor : sellColor;
 
       ctx.beginPath();
       ctx.moveTo(x1, y1Scaled);
@@ -86,7 +91,7 @@ class ActionPointPaneRenderer implements IPrimitivePaneRenderer {
       ? textWidth.width + offset * 4 + this._options.width / 2
       : -this._options.width / 2;
 
-    scope.context.fillStyle = this._options.labelBackgroundColor;
+    scope.context.fillStyle = this._options.type == "Buy" ? buyColor : sellColor;
     scope.context.roundRect(
       x + offset - leftAdjustment,
       y - fontSize,
@@ -94,16 +99,20 @@ class ActionPointPaneRenderer implements IPrimitivePaneRenderer {
       fontSize + offset,
       2
     );
+
+    scope.context.globalAlpha = 0.9;
     scope.context.fill();
+    scope.context.globalAlpha = 1.0;
+
     scope.context.beginPath();
-    scope.context.fillStyle = this._options.labelTextColor;
+    scope.context.fillStyle = this._options.type == "Buy" ? buyTextColor : sellTextColor;
     scope.context.fillText(text, x + offset * 2 - leftAdjustment, y);
   }
 }
 
 class ActionPointPaneView implements IPrimitivePaneView {
   _source: ActionPoint;
-  _p1: ViewPoint = { x: null, y: null };
+  point: ViewPoint = { x: null, y: null };
 
   constructor(source: ActionPoint) {
     this._source = source;
@@ -111,18 +120,18 @@ class ActionPointPaneView implements IPrimitivePaneView {
 
   update() {
     const series = this._source._series;
-    const y1 = series.priceToCoordinate(this._source._p1.price);
+    const y1 = series.priceToCoordinate(this._source.point.price);
 
     const timeScale = this._source._chart.timeScale();
 
-    const x1 = timeScale.timeToCoordinate(this._source._p1.time);
-    this._p1 = { x: x1, y: y1 };
+    const x1 = timeScale.timeToCoordinate(this._source.point.time);
+    this.point = { x: x1, y: y1 };
   }
 
   renderer() {
     return new ActionPointPaneRenderer(
-      this._p1,
-      '' + this._source._p1.price.toFixed(1),
+      this.point,
+      '' + this._source.point.price.toFixed(1),
       this._source._options
     );
   }
@@ -131,37 +140,33 @@ class ActionPointPaneView implements IPrimitivePaneView {
 const defaultOptions: ActionPointOptions = {
   width: 20,
   showLabels: true,
-  labelBackgroundColor: 'rgba(255, 255, 255, 0.85)',
-  labelTextColor: 'rgb(0, 0, 0)',
-  lineColor: 'rgb(255, 0, 0)',
-  lineWidth: 4,
+  lineWidth: 2,
+  type: "Sell"
 };
 
 export interface ActionPointOptions {
-  lineColor: string;
   width: number;
   showLabels: boolean;
-  labelBackgroundColor: string;
-  labelTextColor: string;
   lineWidth: number;
+  type: "Buy" | "Sell"
 }
 
 export class ActionPoint implements ISeriesPrimitive<Time> {
   _chart: IChartApi;
   _series: ISeriesApi<keyof SeriesOptionsMap>;
-  _p1: Point;
+  point: Point;
   _paneViews: ActionPointPaneView[];
   _options: ActionPointOptions;
 
   constructor(
     chart: IChartApi,
     series: ISeriesApi<SeriesType>,
-    p1: Point,
+    point: Point,
     options?: Partial<ActionPointOptions>
   ) {
     this._chart = chart;
     this._series = series;
-    this._p1 = p1;
+    this.point = point;
     this._options = {
       ...defaultOptions,
       ...options,
