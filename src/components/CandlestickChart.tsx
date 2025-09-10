@@ -24,7 +24,6 @@ const zoomToCandleRange = (
   const startTime = data[startIndex].time;
   const endTime = data[endIndex].time;
 
-  // Find the highest high and lowest low in the specified range
   let highestHigh = data[startIndex].high;
   let lowestLow = data[startIndex].low;
   
@@ -57,8 +56,8 @@ const setPriceRangeWithPadding = (
     return;
   }
 
-  const priceRange = endPrice - startPrice;  
-  const totalRange = priceRange * 0.8;  
+  const priceRange = endPrice - startPrice;
+  const totalRange = priceRange * 0.8;
   const rangeCenter = (startPrice + endPrice) / 2 - priceRange * 0.05;
 
   // Set the visible range with padding
@@ -130,7 +129,7 @@ export const CandlestickChart = props => {
       price: 181.05,
     };
 
-    const actionPoint = new ActionPoint(chart, series, point, { type: "Buy" });
+    const actionPoint = new ActionPoint(chart, series, point, { type: "buy" });
     series.attachPrimitive(actionPoint);
 
     // Zoom to candles 5-15 (0-indexed, so indices 4-14) - call after all setup is complete

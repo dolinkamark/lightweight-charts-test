@@ -56,7 +56,7 @@ export const ChartComponent = props => {
       price: 32.51,
     };
 
-    const actionPoint = new ActionPoint(chart, newSeries, point, { type: "Sell" });
+    const actionPoint = new ActionPoint(chart, newSeries, point, { type: "sell" });
     newSeries.attachPrimitive(actionPoint);
 
     window.addEventListener('resize', handleResize);

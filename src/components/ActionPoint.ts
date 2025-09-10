@@ -62,7 +62,7 @@ class ActionPointPaneRenderer implements IPrimitivePaneRenderer {
       );
 
       ctx.lineWidth = this._options.lineWidth;
-      ctx.strokeStyle = this._options.type == "Buy" ? buyColor : sellColor;
+      ctx.strokeStyle = this._options.type == "buy" ? buyColor : sellColor;
 
       ctx.beginPath();
       ctx.moveTo(x1, y1Scaled);
@@ -70,7 +70,7 @@ class ActionPointPaneRenderer implements IPrimitivePaneRenderer {
       ctx.stroke();
 
       if (this._options.showLabels) {
-        this._drawTextLabel(scope, this.text, x1Scaled, textYScaled, true);
+        this._drawTextLabel(scope, this.text, x1Scaled, textYScaled, this._options.position);
       }
     });
   }
@@ -80,20 +80,20 @@ class ActionPointPaneRenderer implements IPrimitivePaneRenderer {
     text: string,
     x: number,
     y: number,
-    left: boolean
+    position: string
   ) {
     scope.context.font = fontSize + 'px Arial';
     scope.context.beginPath();
 
     const offset = 5 * scope.horizontalPixelRatio;
     const textWidth = scope.context.measureText(text);
-    const leftAdjustment = left
+    const sideAdjustment = position == "left"
       ? textWidth.width + offset * 4 + this._options.width / 2
       : -this._options.width / 2;
 
-    scope.context.fillStyle = this._options.type == "Buy" ? buyColor : sellColor;
+    scope.context.fillStyle = this._options.type == "buy" ? buyColor : sellColor;
     scope.context.roundRect(
-      x + offset - leftAdjustment,
+      x + offset - sideAdjustment,
       y - fontSize,
       textWidth.width + offset * 2,
       fontSize + offset,
@@ -105,8 +105,8 @@ class ActionPointPaneRenderer implements IPrimitivePaneRenderer {
     scope.context.globalAlpha = 1.0;
 
     scope.context.beginPath();
-    scope.context.fillStyle = this._options.type == "Buy" ? buyTextColor : sellTextColor;
-    scope.context.fillText(text, x + offset * 2 - leftAdjustment, y);
+    scope.context.fillStyle = this._options.type == "buy" ? buyTextColor : sellTextColor;
+    scope.context.fillText(text, x + offset * 2 - sideAdjustment, y);
   }
 }
 
@@ -141,14 +141,16 @@ const defaultOptions: ActionPointOptions = {
   width: 20,
   showLabels: true,
   lineWidth: 2,
-  type: "Sell"
-};
+  position: "left",
+  type: "buy"
+}
 
 export interface ActionPointOptions {
   width: number;
   showLabels: boolean;
   lineWidth: number;
-  type: "Buy" | "Sell"
+  position: "left" | "right";
+  type: "buy" | "sell"
 }
 
 export class ActionPoint implements ISeriesPrimitive<Time> {
