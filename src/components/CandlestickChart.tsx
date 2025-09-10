@@ -113,6 +113,7 @@ export const CandlestickChart = props => {
       timeScale: {
         timeVisible: true,
         secondsVisible: false,
+        rightBarStaysOnScroll: true,
       },
       crosshair: {
         mode: 0,
